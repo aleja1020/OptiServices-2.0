@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiServices - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="background-image"></div>
+        
+        <div class="login-container">
+            <!-- Logo y Título -->
+            <div class="logo-section">
+                <img src="images/logo.png" alt="OptiServices Logo" class="logo">
+                <h1 class="company-name">OPTISERVICES</h1>
+            </div>
+
+            <!-- Formulario de Login -->
+            <div class="login-form">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="#" id="forgotPassword">Forgot password?</a>
+                </div>
+
+                <button class="login-btn" id="loginBtn">
+                    <span>Login</span>
+                    <i class="fas fa-sign-in-alt"></i>
+                </button>
+            </div>
+
+            <!-- Roles de Usuario -->
+            <div class="user-roles">
+                <div class="role-card" data-role="biomedical">
+                    <i class="fas fa-cog"></i>
+                    <span>Biomedical</span>
+                </div>
+                <div class="role-card" data-role="clinical">
+                    <i class="fas fa-plus"></i>
+                    <span>Clinical/Assistance</span>
+                </div>
+                <div class="role-card" data-role="audits">
+                    <i class="fas fa-search"></i>
+                    <span>Audits</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>

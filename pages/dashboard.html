@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OptiServices - Dashboard</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Fondo -->
+        <div class="background-overlay"></div>
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <img src="../images/logo.png" alt="Logo" class="header-logo">
+                <h1 class="header-title">OPTISERVICES</h1>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="userName">Usuario</span>
+                    <span class="role-badge" id="userRole">Rol</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
+        </header>
+
+        <!-- Contenido Principal -->
+        <main class="dashboard-content">
+            <div class="modules-grid">
+                <!-- Módulo 1: Hojas de Vida -->
+                <div class="module-card" data-module="hojas-vida">
+                    <div class="module-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3 class="module-title">Hojas de vida</h3>
+                    <div class="module-actions">
+                        <button class="btn-action btn-view" title="Ver">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-action btn-edit" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-upload" title="Subir">
+                            <i class="fas fa-upload"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Módulo 2: Bitácora -->
+                <div class="module-card" data-module="bitacora">
+                    <div class="module-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3 class="module-title">Bitácora</h3>
+                    <div class="module-actions">
+                        <button class="btn-action btn-view" title="Ver">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-action btn-edit" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-add" title="Agregar">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Módulo 3: Reportes de Mantenimientos -->
+                <div class="module-card" data-module="reportes">
+                    <div class="module-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3 class="module-title">Reportes de mantenimientos</h3>
+                    <div class="module-actions">
+                        <button class="btn-action btn-view" title="Ver">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-action btn-edit" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-report" title="Reportar daño">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Módulo 4: Calibraciones -->
+                <div class="module-card" data-module="calibraciones">
+                    <div class="module-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <h3 class="module-title">Calibraciones</h3>
+                    <div class="module-actions">
+                        <button class="btn-action btn-view" title="Ver">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-action btn-edit" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-schedule" title="Programar">
+                            <i class="fas fa-calendar"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Módulo 5: Documentos Relevantes -->
+                <div class="module-card" data-module="documentos">
+                    <div class="module-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <h3 class="module-title">Documentos relevantes</h3>
+                    <div class="module-actions">
+                        <button class="btn-action btn-view" title="Ver">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-action btn-edit" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-upload" title="Subir">
+                            <i class="fas fa-upload"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Información del Rol -->
+            <div class="role-info-panel">
+                <div class="info-card">
+                    <i class="fas fa-info-circle"></i>
+                    <h4>Permisos de tu rol</h4>
+                    <p id="roleDescription">Cargando...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>
