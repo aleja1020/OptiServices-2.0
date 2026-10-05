@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador QR - OptiServices</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Librería para generar códigos QR -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 2rem;
+        }
+
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .qr-card {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            transition: transform 0.3s ease;
+        }
+
+        .qr-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .qr-card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .qr-info {
+            text-align: left;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .qr-info p {
+            margin: 8px 0;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+
+        .qr-info strong {
+            color: #212529;
+        }
+
+        .btn-volver {
+            display: block;
+            width: 200px;
+            margin: 40px auto 0;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn-volver:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="qr-container">
+        <h1><i class="fas fa-qrcode"></i> Códigos QR - Equipos Biomédicos</h1>
+        
+        <div class="qr-grid">
+            
+            <!-- QR 1: Monitor de Signos Vitales -->
+            <div class="qr-card">
+                <h2>Monitor de Signos Vitales</h2>
+                <div id="qr-monitor" class="qr-code"></div>
+                <div class="qr-info">
+                    <p><strong>Marca:</strong> Dräger</p>
+                    <p><strong>Modelo:</strong> Vista 100</p>
+                    <p><strong>Serie:</strong> ABC2134</p>
+                </div>
+            </div>
+
+            <!-- QR 2: Máquina de Anestesia -->
+            <div class="qr-card">
+                <h2>Máquina de Anestesia</h2>
+                <div id="qr-anestesia" class="qr-code"></div>
+                <div class="qr-info">
+                    <p><strong>Marca:</strong> Dräger</p>
+                    <p><strong>Modelo:</strong> Primus</p>
+                    <p><strong>Serie:</strong> DEF1234</p>
+                </div>
+            </div>
+
+            <!-- QR 3: Bomba de Infusión -->
+            <div class="qr-card">
+                <h2>Bomba de Infusión</h2>
+                <div id="qr-bomba" class="qr-code"></div>
+                <div class="qr-info">
+                    <p><strong>Marca:</strong> B. Braun</p>
+                    <p><strong>Modelo:</strong> Plus200</p>
+                    <p><strong>Serie:</strong> XYZ5678</p>
+                </div>
+            </div>
+
+        </div>
+
+        <a href="index.html" class="btn-volver">
+            <i class="fas fa-arrow-left"></i> Volver al Login
+        </a>
+    </div>
+
+    <script>
+        // URL base de tu proyecto (ajusta según tu dominio o localhost)
+        const baseUrl = "https://aleja1020.github.io/OptiServices-2.0/";
+        // Si estás probando en localhost, usa esta línea en su lugar:
+        // const baseUrl = "http://127.0.0.1:5500/";
+
+        // Configuración común para los QR
+        const qrConfig = {
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        };
+
+        // Generar QR para Monitor - apunta al login con parámetro ?equipo=monitor
+        new QRCode(document.getElementById("qr-monitor"), {
+            text: `${baseUrl}?equipo=monitor`,
+            ...qrConfig
+        });
+
+        // Generar QR para Anestesia - apunta al login con parámetro ?equipo=anestesia
+        new QRCode(document.getElementById("qr-anestesia"), {
+            text: `${baseUrl}?equipo=anestesia`,
+            ...qrConfig
+        });
+
+        // Generar QR para Bomba - apunta al login con parámetro ?equipo=bomba
+        new QRCode(document.getElementById("qr-bomba"), {
+            text: `${baseUrl}?equipo=bomba`,
+            ...qrConfig
+        });
+
+        console.log("✅ Códigos QR generados exitosamente");
+        console.log("Monitor:", `${baseUrl}?equipo=monitor`);
+        console.log("Anestesia:", `${baseUrl}?equipo=anestesia`);
+        console.log("Bomba:", `${baseUrl}?equipo=bomba`);
+    </script>
+
+</body>
+</html>
