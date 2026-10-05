@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Verificar si el usuario está logueado
     const userData = sessionStorage.getItem('user');
     
     if (!userData) {
-        // No hay sesión, redirigir al login
         window.location.href = '../index.html';
         return;
     }
@@ -15,46 +13,77 @@ document.addEventListener('DOMContentLoaded', function() {
     const roleDescriptionElement = document.getElementById('roleDescription');
     const logoutBtn = document.getElementById('logoutBtn');
     const moduleCards = document.querySelectorAll('.module-card');
+    const dashboardContent = document.querySelector('.dashboard-content');
 
     // Mostrar información del usuario
     userNameElement.textContent = user.username;
     userRoleElement.textContent = getRoleName(user.role);
 
-    // Descripción de permisos según el rol
     const roleDescriptions = {
-        'biomedical': '👩‍🔧 <strong>Biomédica - Acceso Completo:</strong> Puedes ver, editar, subir documentos, generar reportes y gestionar toda la información del sistema.',
-        'clinical': '🩺 <strong>Asistencial - Visualización + Reportes:</strong> Puedes visualizar la información y reportar daños o incidencias en los equipos.',
-        'audits': '👁️ <strong>Auditor - Solo Visualización:</strong> Puedes ver la información generada por el área biomédica, pero no puedes modificarla.'
+        'biomedical': '👩‍🔧 <strong>Biomédica:</strong> Acceso completo a edición, reportes y gestión.',
+        'clinical': '🩺 <strong>Asistencial:</strong> Visualización y reporte de incidencias.',
+        'audits': '👁️ <strong>Auditor:</strong> Solo visualización de registros.'
     };
-
     roleDescriptionElement.innerHTML = roleDescriptions[user.role] || 'Rol no definido';
 
-    // Aplicar permisos según el rol
+    // 🔥 NUEVO: Lógica para mostrar el equipo escaneado
+    const equipoActivo = user.equipoActivo;
+    
+    // Base de datos simulada de los equipos
+    const equiposDB = {
+        'monitor': { nombre: 'Monitor de Signos Vitales - Dräger Vista 100', serie: 'ABC2134', ubicacion: 'UCI - Cama 4' },
+        'anestesia': { nombre: 'Máquina de Anestesia - Dräger Primus', serie: 'DEF1234', ubicacion: 'Quirófano 2' },
+        'bomba': { nombre: 'Bomba de Infusión - B. Braun Plus200', serie: 'XYZ5678', ubicacion: 'Hospitalización - Piso 3' }
+    };
+
+    // Si viene de un QR, mostramos un banner especial al inicio del dashboard
+    if (equipoActivo && equiposDB[equipoActivo]) {
+        const equipo = equiposDB[equipoActivo];
+        
+        // Cambiar el título principal para que sea obvio
+        const headerTitle = document.querySelector('.header-title');
+        if(headerTitle) headerTitle.textContent = `OPTISERVICES | ${equipo.nombre}`;
+
+        // Insertar un banner informativo al principio del contenido
+        const bannerHTML = `
+            <div style="background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%); color: white; padding: 20px; border-radius: 15px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);">
+                <h2 style="margin: 0 0 10px 0; font-size: 1.4rem;"><i class="fas fa-qrcode"></i> Equipo Escaneado</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; font-size: 0.95rem;">
+                    <div><strong>Modelo:</strong> ${equipo.nombre}</div>
+                    <div><strong>N° Serie:</strong> ${equipo.serie}</div>
+                    <div><strong>Ubicación:</strong> ${equipo.ubicacion}</div>
+                </div>
+            </div>
+        `;
+        dashboardContent.insertAdjacentHTML('afterbegin', bannerHTML);
+    } else {
+        // Si entró normal sin escanear QR
+        const headerTitle = document.querySelector('.header-title');
+        if(headerTitle) headerTitle.textContent = `OPTISERVICES | Panel General`;
+    }
+
     applyRolePermissions(user.role);
 
     // Event listeners para los módulos
     moduleCards.forEach(card => {
         card.addEventListener('click', function(e) {
-            // Si no se hizo clic en un botón de acción
             if (!e.target.closest('.btn-action')) {
                 const moduleName = this.getAttribute('data-module');
-                openModule(moduleName, user.role);
+                openModule(moduleName, user.role, equipoActivo);
             }
         });
     });
 
-    // Event listeners para botones de acción
     document.querySelectorAll('.btn-action').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             const card = this.closest('.module-card');
             const moduleName = card.getAttribute('data-module');
             const action = getActionType(this);
-            handleAction(moduleName, action, user.role);
+            handleAction(moduleName, action, user.role, equipoActivo);
         });
     });
 
-    // Logout
     logoutBtn.addEventListener('click', function() {
         if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
             sessionStorage.removeItem('user');
@@ -63,43 +92,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // ==================== FUNCIONES ====================
-
     function getRoleName(role) {
-        const roleNames = {
-            'biomedical': 'Biomédica',
-            'clinical': 'Asistencial',
-            'audits': 'Auditor'
-        };
-        return roleNames[role] || role;
+        const names = { 'biomedical': 'Biomédica', 'clinical': 'Asistencial', 'audits': 'Auditor' };
+        return names[role] || role;
     }
 
     function applyRolePermissions(role) {
         moduleCards.forEach(card => {
             const actions = card.querySelectorAll('.btn-action');
-            
             actions.forEach(btn => {
                 const actionType = getActionType(btn);
-                
-                // Biomédica: todos los permisos
-                if (role === 'biomedical') {
-                    btn.style.display = 'flex';
-                }
-                // Asistencial: solo ver y reportar
-                else if (role === 'clinical') {
-                    if (actionType === 'view' || actionType === 'report') {
-                        btn.style.display = 'flex';
-                    } else {
-                        btn.style.display = 'none';
-                    }
-                }
-                // Auditor: solo ver
-                else if (role === 'audits') {
-                    if (actionType === 'view') {
-                        btn.style.display = 'flex';
-                    } else {
-                        btn.style.display = 'none';
-                    }
-                }
+                if (role === 'biomedical') btn.style.display = 'flex';
+                else if (role === 'clinical' && (actionType === 'view' || actionType === 'report')) btn.style.display = 'flex';
+                else if (role === 'audits' && actionType === 'view') btn.style.display = 'flex';
+                else btn.style.display = 'none';
             });
         });
     }
@@ -114,48 +120,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'unknown';
     }
 
-    function openModule(moduleName, role) {
-        const moduleNames = {
-            'hojas-vida': 'Hojas de Vida',
-            'bitacora': 'Bitácora',
-            'reportes': 'Reportes de Mantenimientos',
-            'calibraciones': 'Calibraciones',
-            'documentos': 'Documentos Relevantes'
-        };
-
-        alert(`Abriendo módulo: ${moduleNames[moduleName]}\nRol: ${getRoleName(role)}`);
-        // Aquí iría la navegación real: window.location.href = `modules/${moduleName}.html`;
+    function openModule(moduleName, role, equipo) {
+        const equipoInfo = equipo ? `del equipo: ${equiposDB[equipo].nombre}` : 'General';
+        alert(`Abriendo módulo: ${moduleName}\n${equipoInfo}\nRol: ${getRoleName(role)}`);
     }
 
-    function handleAction(moduleName, action, role) {
+    function handleAction(moduleName, action, role, equipo) {
         const permissions = {
-            'biomedical': {
-                'view': 'Ver información',
-                'edit': 'Editar información',
-                'upload': 'Subir documentos',
-                'add': 'Agregar registro',
-                'report': 'Generar reporte',
-                'schedule': 'Programar calibración'
-            },
-            'clinical': {
-                'view': 'Ver información',
-                'report': 'Reportar daño o incidencia'
-            },
-            'audits': {
-                'view': 'Ver información (solo lectura)'
-            }
+            'biomedical': { 'view': 'Ver', 'edit': 'Editar', 'upload': 'Subir', 'add': 'Agregar', 'report': 'Generar reporte', 'schedule': 'Programar' },
+            'clinical': { 'view': 'Ver', 'report': 'Reportar daño' },
+            'audits': { 'view': 'Ver (solo lectura)' }
         };
 
-        const userPermissions = permissions[role] || {};
-        const actionDescription = userPermissions[action] || 'Acción no permitida';
-
-        // Verificar si la acción está permitida
-        if (!userPermissions[action]) {
-            alert(`️ No tienes permisos para realizar esta acción.\n\nTu rol (${getRoleName(role)}) no permite: ${action}`);
+        const userPerms = permissions[role] || {};
+        if (!userPerms[action]) {
+            alert(`⚠️ No tienes permisos para: ${action}`);
             return;
         }
 
-        alert(`✅ Acción: ${actionDescription}\nMódulo: ${moduleName}`);
-        // Aquí iría la lógica real de cada acción
+        const equipoInfo = equipo ? `(Equipo: ${equiposDB[equipo].serie})` : '';
+        alert(`✅ Acción: ${userPerms[action]} ${equipoInfo}\nMódulo: ${moduleName}`);
     }
 });
